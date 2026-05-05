@@ -1,5 +1,13 @@
+# Python virtualenv (com ou sem ponto no nome da pasta)
 backend/.venv/
+backend/venv/
+.venv/
+venv/
+
+# Segredos — nunca commitar
 backend/.env
+.env
+.env.local
 backend/__pycache__/
 backend/**/__pycache__/
 backend/*.pyc

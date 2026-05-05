@@ -2,6 +2,8 @@
 
 Plataforma literária (estante, grupos e marketplace P2P) conforme o planejamento em `versos_mvp_planning_cursor.md`.
 
+**Repositório no GitHub:** [github.com/robsonpcs1/versos](https://github.com/robsonpcs1/versos)
+
 ---
 
 ## Pré-requisitos

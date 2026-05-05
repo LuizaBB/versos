@@ -2,6 +2,8 @@
 
 Este arquivo é para **agentes autônomos** (Cursor, CI local, etc.) que precisam **entender e executar** o projeto sem interpretação ambígua. O guia para humanos está em `README.md`.
 
+**Repositório remoto:** [https://github.com/robsonpcs1/versos](https://github.com/robsonpcs1/versos)
+
 ---
 
 ## Objetivo

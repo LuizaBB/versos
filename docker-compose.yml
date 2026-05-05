@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: versos
+      POSTGRES_PASSWORD: versos
+      POSTGRES_DB: versos
+    ports:
+      - "5432:5432"
+    volumes:
+      - versos_pgdata:/var/lib/postgresql/data
+
+volumes:
+  versos_pgdata:

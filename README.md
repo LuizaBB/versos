@@ -124,8 +124,10 @@ Se você alterar esse arquivo, **pare e rode de novo** `npm run dev` para o Vite
 
 1. Abra **`http://localhost:5173`**
 2. Faça login com uma conta de demo (após o seed):
-   - **`demo@versos.com`** / **`demo123`**
-   - **`maria@versos.com`** / **`demo123`**
+   - **`demo@versos.com`** / **`demo1234`**
+   - **`maria@versos.com`** / **`demo1234`**
+
+   Se o seed foi corrido **antes** desta alteração, as contas demo podem ainda ter a senha antiga no banco — apague os utilizadores na BD ou use um Postgres limpo e volte a correr o seed.
 
 Se o login falhar, confira: Docker no ar, Uvicorn na porta **8080**, e no navegador (F12 → Rede) se as requisições vão para `http://localhost:8080`.
 

@@ -130,7 +130,7 @@ Se o agente alterar essa URL, **reiniciar** `npm run dev`.
 ```bash
 curl -s -X POST http://127.0.0.1:8080/auth/login \
   -H "Content-Type: application/json" \
-  -d "{\"email\":\"demo@versos.com\",\"password\":\"demo123\"}"
+  -d "{\"email\":\"demo@versos.com\",\"password\":\"demo1234\"}"
 ```
 
 Resposta deve conter `access_token`.
@@ -141,8 +141,8 @@ Resposta deve conter `access_token`.
 
 | E-mail | Senha |
 |--------|--------|
-| `demo@versos.com` | `demo123` |
-| `maria@versos.com` | `demo123` |
+| `demo@versos.com` | `demo1234` |
+| `maria@versos.com` | `demo1234` |
 
 ---
 
@@ -183,5 +183,5 @@ No Windows, inspecionar uso de porta: `netstat -ano | findstr :8080`.
 
 1. `docker compose ps` → Postgres up.  
 2. `GET http://127.0.0.1:8080/health` → 200.  
-3. `POST /auth/login` com `demo@versos.com` / `demo123` → `access_token`.  
+3. `POST /auth/login` com `demo@versos.com` / `demo1234` → `access_token`.  
 4. Frontend em `5173` carrega e consegue autenticar contra a API configurada em `VITE_API_URL`.

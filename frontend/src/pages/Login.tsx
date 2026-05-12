@@ -7,7 +7,7 @@ export function Login() {
   const nav = useNavigate();
   const loc = useLocation() as { state?: { from?: string } };
   const [email, setEmail] = useState("demo@versos.com");
-  const [password, setPassword] = useState("demo123");
+  const [password, setPassword] = useState("demo1234");
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 

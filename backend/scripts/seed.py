@@ -28,14 +28,14 @@ def main() -> None:
         u1 = User(
             name="Demo Leitor",
             email="demo@versos.com",
-            password_hash=hash_password("demo123"),
+            password_hash=hash_password("demo1234"),
             plan_type=PlanType.FREE,
             avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=demo",
         )
         u2 = User(
             name="Maria Vendedora",
             email="maria@versos.com",
-            password_hash=hash_password("demo123"),
+            password_hash=hash_password("demo1234"),
             plan_type=PlanType.FREE,
             avatar_url="https://api.dicebear.com/7.x/avataaars/svg?seed=maria",
         )
@@ -121,7 +121,7 @@ def main() -> None:
         )
 
         db.commit()
-        print("Seed OK. Usuários: demo@versos.com / demo123, maria@versos.com / demo123")
+        print("Seed OK. Usuários: demo@versos.com / demo1234, maria@versos.com / demo1234")
     finally:
         db.close()
 

@@ -2,6 +2,8 @@
 
 Um único runtime Python serve a **API FastAPI** e os ficheiros estáticos do **Vite** (build copiado para `public/`). Evita `experimentalServices`, onde alguns projetos falhavam na fase **Deploying outputs**.
 
+**Preset na Vercel:** o deploy unificado **não** usa `experimentalServices`. Se o projeto foi criado como **Services**, o build falha até corrigires o preset. O [`vercel.json`](../vercel.json) inclui **`"framework": null`** (“Other”) para **substituir** o Framework do painel; se ainda der erro, em **Project → Settings → General → Framework Preset** escolhe **Other** manualmente.
+
 - **Raiz:** [`vercel.json`](../vercel.json) chama [`scripts/vercel-install.sh`](../scripts/vercel-install.sh) e [`scripts/vercel-build.sh`](../scripts/vercel-build.sh) (log verboso com `set -x`).
 - **Entrypoint:** [`vercel_app.py`](../vercel_app.py) — define `BACKEND_ROUTE_PREFIX` vazio antes de importar a app (API na mesma origem: `/health`, `/auth`, …).
 - **Dependências Python na raiz:** [`pyproject.toml`](../pyproject.toml) (manter `dependencies` alinhadas com `backend/pyproject.toml`) e [`requirements.txt`](../requirements.txt) duplicado para referência.

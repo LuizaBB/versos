@@ -42,7 +42,7 @@ export async function apiFetch<T>(
     } catch {
       const preview = text.slice(0, 200).replace(/\s+/g, " ");
       throw new Error(
-        `Resposta não-JSON (${res.status} ${url}). Isto costuma ser HTML da CDN ou 404 — confirma que a API está em /api. Início: ${preview}`
+        `Resposta não-JSON (${res.status} ${url}). Se for HTML "NOT_FOUND", o pedido não chegou ao Python (ex.: pasta public/ na CDN). Início: ${preview}`
       );
     }
   }

@@ -1,11 +1,12 @@
 # Deploy na Vercel — **ASGI único na raiz** (`vercel_app.py`)
 
-Um único runtime Python serve a **API FastAPI** e os ficheiros estáticos do **Vite** (build copiado para `public/`). Evita `experimentalServices`, onde alguns projetos falhavam na fase **Deploying outputs**.
+Um único runtime Python serve a **API** (montada em `/api`) e o **SPA** a partir da pasta **`spa/`** (cópia do build Vite). **Não** usamos `public/` na raiz: na Vercel essa pasta é tratada como estática na CDN e os pedidos podem **não chegar ao Python** (404 `NOT_FOUND` na edge, **sem linhas em Runtime Logs**).
 
-**Preset na Vercel:** o deploy unificado **não** usa `experimentalServices`. Se o projeto foi criado como **Services**, o build falha até corrigires o preset. O [`vercel.json`](../vercel.json) inclui **`"framework": null`** (“Other”) para **substituir** o Framework do painel; se ainda der erro, em **Project → Settings → General → Framework Preset** escolhe **Other** manualmente.
+**Preset na Vercel:** o [`vercel.json`](../vercel.json) usa **`"framework": "fastapi"`** (em conjunto com `[tool.vercel]` no `pyproject.toml`). Se o projeto ainda estiver como **Services** no painel, altera para **FastAPI** ou **Other** em **Settings → General → Framework Preset** para evitar conflitos.
 
 - **Raiz:** [`vercel.json`](../vercel.json) chama [`scripts/vercel-install.sh`](../scripts/vercel-install.sh) e [`scripts/vercel-build.sh`](../scripts/vercel-build.sh) (log verboso com `set -x`).
-- **Entrypoint:** [`vercel_app.py`](../vercel_app.py) — define `BACKEND_ROUTE_PREFIX` vazio e monta a FastAPI em **`/api`** (ex.: `/api/health`, `POST /api/auth/login`). O SPA fica em `/` com ficheiros em `public/`, evitando HTML da CDN em rotas da API.
+- **Build:** o script copia `frontend/dist` → **`spa/`** na raiz (ver [`scripts/vercel-build.sh`](../scripts/vercel-build.sh)). **Evita `public/`**, que a Vercel serve na CDN e pode bloquear `/api/*` sem invocar a função.
+- **Entrypoint:** [`vercel_app.py`](../vercel_app.py) — define `BACKEND_ROUTE_PREFIX` vazio e monta a FastAPI em **`/api`**. O SPA e os assets vêm de **`spa/`** (servidos pelo Python em `/`, `/assets/*`, etc.).
 - **Dependências Python na raiz:** [`pyproject.toml`](../pyproject.toml) (manter `dependencies` alinhadas com `backend/pyproject.toml`) e [`requirements.txt`](../requirements.txt) duplicado para referência.
 - **`.vercelignore`:** ignora `backend/pyproject.toml` no upload para não haver segundo “projeto Python” detetado.
 
@@ -36,11 +37,11 @@ Um único runtime Python serve a **API FastAPI** e os ficheiros estáticos do **
 
 ## Logs em runtime (erros de login, 500, etc.)
 
-- **Build** (npm, `public/`): separador **Building** do deployment.
+- **Build** (npm, cópia para `spa/`): separador **Building** do deployment.
 - **Pedidos à API** (Python): **Deployments → [deployment] → Logs** (ou **Runtime Logs** / **Functions**), filtro **Production** e intervalo de tempo certo. Erros no handler aparecem aqui, não no log de build.
 - Se não aparecer nada: confirma que estás a abrir os **logs desse deployment** e não só o ecrã de *Overview*. Em planos gratuitos o retention é curto.
 
-Se a consola do browser mostrar **resposta não-JSON**, muitas vezes era HTML da CDN antes da API estar em **`/api`** — o front em produção usa base **`/api`** (ver `frontend/src/api/client.ts`).
+- Se vês **404** com corpo `NOT_FOUND` / `gru1::` na rede do browser e **0 linhas** em Runtime Logs: o pedido ficou na **edge/CDN** e **não invocou a função Python** (ex.: `public/` na raiz ou roteamento errado). Com **`spa/`** em vez de `public/` e API em **`/api`**, `/api/*` deve aparecer nos logs quando a função corre.
 
 ---
 
@@ -50,7 +51,7 @@ Os scripts usam **`set -x`** (cada comando aparece no log) e marcas `=== [versos
 
 - Onde parou entre **vercel-install** e **vercel-build**
 - Saída de **`npm ci`** (verbose) e **`npm run build --loglevel verbose`**
-- Listagens de **`dist/`** e **`public/`** após o build
+- Listagens de **`dist/`** e **`spa/`** após o build
 
 Se o log cortar **depois** de `Build Completed` mas **durante** `Deploying outputs`, costuma ser falha interna da Vercel: redeploy sem cache, outra região, ou suporte com o Deployment ID.
 

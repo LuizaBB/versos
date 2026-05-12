@@ -2,7 +2,8 @@
 Entrypoint único na Vercel:
 - A API FastAPI corre sob **/api** (ex.: POST /api/auth/login). Isto evita que a CDN
   sirva HTML de erro para pedidos que coincidem com rotas “estáticas” em public/.
-- O SPA e assets do Vite vêm de **public/** (/, /assets/*, fallback GET).
+- O SPA e assets do Vite vêm de **spa/** (cópia do dist), não de **public/** — a pasta `public/`
+  na raiz é servida na CDN e pode impedir que `/api/*` chegue ao Python (404 na edge, sem logs).
 """
 from __future__ import annotations
 
@@ -22,7 +23,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.main import app as api_application
 
-PUBLIC = ROOT / "public"
+PUBLIC = ROOT / "spa"
 INDEX = PUBLIC / "index.html"
 _ASSETS = PUBLIC / "assets"
 
@@ -38,7 +39,7 @@ if _ASSETS.is_dir():
 async def root_index():
     if INDEX.is_file():
         return FileResponse(INDEX)
-    raise HTTPException(status_code=404, detail="Frontend não encontrado: rode o build (pasta public/).")
+    raise HTTPException(status_code=404, detail="Frontend não encontrado: rode o build (pasta spa/).")
 
 
 @shell.get("/vite.svg", include_in_schema=False)
@@ -51,7 +52,7 @@ async def vite_svg():
 
 @shell.get("/{full_path:path}", include_in_schema=False)
 async def static_or_spa(full_path: str):
-    """Ficheiros em public/ ou fallback para index.html (React Router)."""
+    """Ficheiros em spa/ ou fallback para index.html (React Router)."""
     if not full_path:
         if INDEX.is_file():
             return FileResponse(INDEX)

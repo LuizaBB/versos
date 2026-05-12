@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build do Vite + cópia para public/ com traço shell (-x) para ver cada comando na Vercel.
+# Build do Vite + cópia para spa/ (NÃO usar public/ na raiz: a Vercel serve public/ na CDN e
+# pedidos como /api/* podem ficar em 404 na edge sem invocar o Python — sem logs em Runtime).
 set -euxo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -30,14 +31,14 @@ echo "=== [versos] dist/ contents ==="
 ls -la dist
 ls -la dist/assets 2>/dev/null | head -30 || true
 
-echo "=== [versos] copy dist -> public/ at repo root ==="
+echo "=== [versos] copy dist -> spa/ at repo root (avoid public/ CDN-only routing) ==="
 cd "$ROOT"
-rm -rf public
-mkdir -p public
-cp -r frontend/dist/. public/
+rm -rf public spa
+mkdir -p spa
+cp -r frontend/dist/. spa/
 
-echo "=== [versos] public/ contents ==="
-ls -la public | head -30
-ls -la public/assets 2>/dev/null | head -20 || true
+echo "=== [versos] spa/ contents ==="
+ls -la spa | head -30
+ls -la spa/assets 2>/dev/null | head -20 || true
 
 echo "=== [versos] vercel-build DONE ==="

@@ -1,0 +1,2 @@
+# Evita segundo projeto Python na deteção da Vercel (deps ficam no pyproject da raiz).
+backend/pyproject.toml

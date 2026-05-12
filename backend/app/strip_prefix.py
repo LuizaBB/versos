@@ -7,9 +7,9 @@ from starlette.requests import Request
 
 
 def _route_prefix() -> str:
-    explicit = os.getenv("BACKEND_ROUTE_PREFIX", "").strip().rstrip("/")
-    if explicit:
-        return explicit
+    # Se a chave existir (mesmo vazia), respeita: "" = sem prefixo (deploy ASGI único na raiz).
+    if "BACKEND_ROUTE_PREFIX" in os.environ:
+        return os.environ["BACKEND_ROUTE_PREFIX"].strip().rstrip("/")
     if os.getenv("VERCEL"):
         return "/_/backend"
     return ""

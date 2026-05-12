@@ -5,7 +5,7 @@ const API =
     ? raw.trim().replace(/\/$/, "")
     : import.meta.env.DEV
       ? "http://127.0.0.1:8080"
-      : "/_/backend";
+      : "";
 
 const TOKEN_KEY = "versos_token";
 

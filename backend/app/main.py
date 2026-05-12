@@ -45,7 +45,7 @@ app.include_router(purchases.router)
 app.include_router(purchases.me_purchases_router)
 app.include_router(notifications.router)
 
-# Vercel experimentalServices: requisições chegam com prefixo /_/backend — remover antes do roteamento.
+# Vercel multi-serviço: prefixo /_/backend; deploy único na raiz define BACKEND_ROUTE_PREFIX vazio em vercel_app.py.
 _rp = _route_prefix()
 if _rp:
     app.add_middleware(StripServiceRoutePrefixMiddleware, prefix=_rp)

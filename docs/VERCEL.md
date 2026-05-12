@@ -5,7 +5,7 @@ Um único runtime Python serve a **API FastAPI** e os ficheiros estáticos do **
 **Preset na Vercel:** o deploy unificado **não** usa `experimentalServices`. Se o projeto foi criado como **Services**, o build falha até corrigires o preset. O [`vercel.json`](../vercel.json) inclui **`"framework": null`** (“Other”) para **substituir** o Framework do painel; se ainda der erro, em **Project → Settings → General → Framework Preset** escolhe **Other** manualmente.
 
 - **Raiz:** [`vercel.json`](../vercel.json) chama [`scripts/vercel-install.sh`](../scripts/vercel-install.sh) e [`scripts/vercel-build.sh`](../scripts/vercel-build.sh) (log verboso com `set -x`).
-- **Entrypoint:** [`vercel_app.py`](../vercel_app.py) — define `BACKEND_ROUTE_PREFIX` vazio antes de importar a app (API na mesma origem: `/health`, `/auth`, …).
+- **Entrypoint:** [`vercel_app.py`](../vercel_app.py) — define `BACKEND_ROUTE_PREFIX` vazio e monta a FastAPI em **`/api`** (ex.: `/api/health`, `POST /api/auth/login`). O SPA fica em `/` com ficheiros em `public/`, evitando HTML da CDN em rotas da API.
 - **Dependências Python na raiz:** [`pyproject.toml`](../pyproject.toml) (manter `dependencies` alinhadas com `backend/pyproject.toml`) e [`requirements.txt`](../requirements.txt) duplicado para referência.
 - **`.vercelignore`:** ignora `backend/pyproject.toml` no upload para não haver segundo “projeto Python” detetado.
 
@@ -30,7 +30,17 @@ Um único runtime Python serve a **API FastAPI** e os ficheiros estáticos do **
 
 4. **Testes**
    - `https://SEU-PROJETO.vercel.app/` — SPA
-   - `https://SEU-PROJETO.vercel.app/health` — API
+   - `https://SEU-PROJETO.vercel.app/api/health` — API
+
+---
+
+## Logs em runtime (erros de login, 500, etc.)
+
+- **Build** (npm, `public/`): separador **Building** do deployment.
+- **Pedidos à API** (Python): **Deployments → [deployment] → Logs** (ou **Runtime Logs** / **Functions**), filtro **Production** e intervalo de tempo certo. Erros no handler aparecem aqui, não no log de build.
+- Se não aparecer nada: confirma que estás a abrir os **logs desse deployment** e não só o ecrã de *Overview*. Em planos gratuitos o retention é curto.
+
+Se a consola do browser mostrar **resposta não-JSON**, muitas vezes era HTML da CDN antes da API estar em **`/api`** — o front em produção usa base **`/api`** (ver `frontend/src/api/client.ts`).
 
 ---
 
@@ -58,4 +68,4 @@ Se o log cortar **depois** de `Build Completed` mas **durante** `Deploying outpu
 
 ## `VITE_API_URL` (frontend)
 
-Só se a API estiver **fora** do mesmo domínio. No deploy unificado o padrão é **mesma origem** (URL relativa) — **não** definas `VITE_API_URL` salvo se precisares de outro host.
+Só se a API estiver **fora** do mesmo domínio ou noutro prefixo. No deploy unificado na Vercel o padrão é **`/api`** na mesma origem — **não** definas `VITE_API_URL` salvo se precisares de outro host ou prefixo.

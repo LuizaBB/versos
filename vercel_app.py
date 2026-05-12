@@ -1,7 +1,8 @@
 """
-Entrypoint único na Vercel (raiz do repo):
-- FastAPI em `backend/app` (mesma origem que o SPA: sem prefixo /_/backend).
-- Serve o build do Vite em `public/` (SPA + /assets).
+Entrypoint único na Vercel:
+- A API FastAPI corre sob **/api** (ex.: POST /api/auth/login). Isto evita que a CDN
+  sirva HTML de erro para pedidos que coincidem com rotas “estáticas” em public/.
+- O SPA e assets do Vite vêm de **public/** (/, /assets/*, fallback GET).
 """
 from __future__ import annotations
 
@@ -9,35 +10,38 @@ import os
 import sys
 from pathlib import Path
 
-# Um único ASGI na mesma origem: não usar prefixo de serviço /_/backend.
 os.environ["BACKEND_ROUTE_PREFIX"] = ""
 
 ROOT = Path(__file__).resolve().parent
 BACKEND = ROOT / "backend"
 sys.path.insert(0, str(BACKEND))
 
-from fastapi import HTTPException
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.main import app
+from app.main import app as api_application
 
 PUBLIC = ROOT / "public"
 INDEX = PUBLIC / "index.html"
 _ASSETS = PUBLIC / "assets"
 
+shell = FastAPI(title="Versos", version="0.1.0")
+
+shell.mount("/api", api_application)
+
 if _ASSETS.is_dir():
-    app.mount("/assets", StaticFiles(directory=str(_ASSETS)), name="vite_assets")
+    shell.mount("/assets", StaticFiles(directory=str(_ASSETS)), name="vite_assets")
 
 
-@app.get("/", include_in_schema=False)
+@shell.get("/", include_in_schema=False)
 async def root_index():
     if INDEX.is_file():
         return FileResponse(INDEX)
     raise HTTPException(status_code=404, detail="Frontend não encontrado: rode o build (pasta public/).")
 
 
-@app.get("/vite.svg", include_in_schema=False)
+@shell.get("/vite.svg", include_in_schema=False)
 async def vite_svg():
     p = PUBLIC / "vite.svg"
     if p.is_file():
@@ -45,7 +49,7 @@ async def vite_svg():
     raise HTTPException(status_code=404)
 
 
-@app.get("/{full_path:path}", include_in_schema=False)
+@shell.get("/{full_path:path}", include_in_schema=False)
 async def static_or_spa(full_path: str):
     """Ficheiros em public/ ou fallback para index.html (React Router)."""
     if not full_path:
@@ -66,3 +70,6 @@ async def static_or_spa(full_path: str):
         return FileResponse(INDEX)
 
     raise HTTPException(status_code=404)
+
+
+app = shell

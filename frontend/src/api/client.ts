@@ -1,11 +1,11 @@
 const raw = import.meta.env.VITE_API_URL;
-/** Base da API: dev = Uvicorn local; prod na Vercel (2 serviços) = prefixo do backend. */
+/** Base da API: dev = Uvicorn local; prod na Vercel (vercel_app) = /api (montagem FastAPI). */
 const API =
   typeof raw === "string" && raw.trim().length > 0
     ? raw.trim().replace(/\/$/, "")
     : import.meta.env.DEV
       ? "http://127.0.0.1:8080"
-      : "";
+      : "/api";
 
 const TOKEN_KEY = "versos_token";
 
@@ -35,9 +35,20 @@ export async function apiFetch<T>(
   const res = await fetch(url, { ...init, headers });
   if (res.status === 204) return undefined as T;
   const text = await res.text();
-  const data = text ? JSON.parse(text) : null;
+  let data: unknown = null;
+  if (text) {
+    try {
+      data = JSON.parse(text) as unknown;
+    } catch {
+      const preview = text.slice(0, 200).replace(/\s+/g, " ");
+      throw new Error(
+        `Resposta não-JSON (${res.status} ${url}). Isto costuma ser HTML da CDN ou 404 — confirma que a API está em /api. Início: ${preview}`
+      );
+    }
+  }
   if (!res.ok) {
-    const detail = data?.detail;
+    const body = data as { detail?: unknown } | null;
+    const detail = body?.detail;
     const msg =
       typeof detail === "string"
         ? detail

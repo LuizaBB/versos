@@ -4,6 +4,8 @@ Este arquivo é para **agentes autônomos** (Cursor, CI local, etc.) que precisa
 
 **Repositório remoto:** [https://github.com/robsonpcs1/versos](https://github.com/robsonpcs1/versos)
 
+**Vercel (um único projeto na raiz do repo):** `DATABASE_URL` + `SECRET_KEY` no painel; build copia o Vite para `public/`. Detalhes: `docs/VERCEL.md`.
+
 ---
 
 ## Objetivo

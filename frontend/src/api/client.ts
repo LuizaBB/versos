@@ -1,4 +1,10 @@
-const API = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const raw = import.meta.env.VITE_API_URL;
+const API =
+  typeof raw === "string" && raw.trim().length > 0
+    ? raw.trim().replace(/\/$/, "")
+    : import.meta.env.DEV
+      ? "http://127.0.0.1:8080"
+      : "";
 
 const TOKEN_KEY = "versos_token";
 
@@ -24,7 +30,8 @@ export async function apiFetch<T>(
     const t = getToken();
     if (t) headers.set("Authorization", `Bearer ${t}`);
   }
-  const res = await fetch(`${API}${path}`, { ...init, headers });
+  const url = API ? `${API}${path}` : path;
+  const res = await fetch(url, { ...init, headers });
   if (res.status === 204) return undefined as T;
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;

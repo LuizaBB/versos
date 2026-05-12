@@ -4,11 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20.19.0"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "vite",
-    "build": "node -e \"console.log('[versos build] node', process.version)\" && tsc -b --pretty false && node -e \"console.log('[versos build] tsc ok, starting vite')\" && vite build",
+    "build": "node scripts/vercel-build.mjs",
+    "build:legacy": "tsc -b --pretty false && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

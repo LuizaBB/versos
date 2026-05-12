@@ -4,7 +4,7 @@ Este arquivo é para **agentes autônomos** (Cursor, CI local, etc.) que precisa
 
 **Repositório remoto:** [https://github.com/robsonpcs1/versos](https://github.com/robsonpcs1/versos)
 
-**Vercel:** `experimentalServices` em `vercel.json` (front + API em `/_/backend`). Ver `docs/VERCEL.md`.
+**Vercel:** deploy unificado na raiz (`vercel_app.py`, build em `public/`). Ver `docs/VERCEL.md`.
 
 ---
 

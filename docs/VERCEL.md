@@ -4,7 +4,7 @@ Um único runtime Python serve a **API** (montada em `/api`) e o **SPA** a parti
 
 **Preset na Vercel:** o [`vercel.json`](../vercel.json) usa **`"framework": "fastapi"`** (em conjunto com `[tool.vercel]` no `pyproject.toml`). Se o projeto ainda estiver como **Services** no painel, altera para **FastAPI** ou **Other** em **Settings → General → Framework Preset** para evitar conflitos.
 
-- **Raiz:** [`vercel.json`](../vercel.json) chama [`scripts/vercel-install.sh`](../scripts/vercel-install.sh) e [`scripts/vercel-build.sh`](../scripts/vercel-build.sh) (log verboso com `set -x`).
+- **Raiz:** [`vercel.json`](../vercel.json) define `installCommand` / `buildCommand` ([`scripts/vercel-install.sh`](../scripts/vercel-install.sh), [`scripts/vercel-build.sh`](../scripts/vercel-build.sh), log com `set -x`). O **`installCommand` substitui** o install automático da Vercel: o script instala **`requirements.txt` na raiz** (FastAPI, etc.) e depois **`npm ci`** no `frontend/`.
 - **Build:** o script copia `frontend/dist` → **`spa/`** na raiz (ver [`scripts/vercel-build.sh`](../scripts/vercel-build.sh)). **Evita `public/`**, que a Vercel serve na CDN e pode bloquear `/api/*` sem invocar a função.
 - **Entrypoint:** [`vercel_app.py`](../vercel_app.py) — define `BACKEND_ROUTE_PREFIX` vazio e monta a FastAPI em **`/api`**. O SPA e os assets vêm de **`spa/`** (servidos pelo Python em `/`, `/assets/*`, etc.).
 - **Dependências Python na raiz:** [`pyproject.toml`](../pyproject.toml) (manter `dependencies` alinhadas com `backend/pyproject.toml`) e [`requirements.txt`](../requirements.txt) duplicado para referência.

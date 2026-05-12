@@ -8,8 +8,7 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/vercel-build.mjs",
-    "build:legacy": "tsc -b --pretty false && vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

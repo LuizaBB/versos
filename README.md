@@ -4,7 +4,7 @@ Plataforma literária (estante, grupos e marketplace P2P) conforme o planejament
 
 **Repositório no GitHub:** [github.com/robsonpcs1/versos](https://github.com/robsonpcs1/versos)
 
-**Deploy na Vercel (um projeto só, raiz do repo):** [`docs/VERCEL.md`](docs/VERCEL.md) — build do front para `public/` + API FastAPI no mesmo domínio; Postgres na nuvem (`DATABASE_URL`).
+**Deploy na Vercel:** [`docs/VERCEL.md`](docs/VERCEL.md) — `vercel.json` com `experimentalServices` (front em `/`, API em `/_/backend`); Postgres na nuvem (`DATABASE_URL`).
 
 ---
 

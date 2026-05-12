@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers import auth, books, groups, listings, me_shelf, notifications, purchases
+from app.strip_prefix import StripServiceRoutePrefixMiddleware, _route_prefix
 
 
 def _cors_origins() -> list[str]:
@@ -43,6 +44,11 @@ app.include_router(listings.me_listings_router)
 app.include_router(purchases.router)
 app.include_router(purchases.me_purchases_router)
 app.include_router(notifications.router)
+
+# Vercel experimentalServices: requisições chegam com prefixo /_/backend — remover antes do roteamento.
+_rp = _route_prefix()
+if _rp:
+    app.add_middleware(StripServiceRoutePrefixMiddleware, prefix=_rp)
 
 
 @app.get("/health")

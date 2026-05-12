@@ -1,10 +1,11 @@
 const raw = import.meta.env.VITE_API_URL;
+/** Base da API: dev = Uvicorn local; prod na Vercel (2 serviços) = prefixo do backend. */
 const API =
   typeof raw === "string" && raw.trim().length > 0
     ? raw.trim().replace(/\/$/, "")
     : import.meta.env.DEV
       ? "http://127.0.0.1:8080"
-      : "";
+      : "/_/backend";
 
 const TOKEN_KEY = "versos_token";
 

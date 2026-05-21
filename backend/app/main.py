@@ -6,6 +6,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth, books, groups, listings, me_shelf, notifications, purchases
 from app.strip_prefix import StripServiceRoutePrefixMiddleware, _route_prefix
 
+#
+from app.routers.group_messages import router as group_messages_router
+app.include_router(group_messages_router)
+#
 
 def _cors_origins() -> list[str]:
     raw = os.getenv("CORS_ORIGINS", "")

@@ -11,6 +11,10 @@ from app.models import (
     PlanType,
     PurchaseStatus,
     ReadingStatus,
+#
+    MessageKind, 
+    ListingStatus,
+#
 )
 
 
@@ -127,6 +131,9 @@ class GroupCreate(BaseModel):
     description: Optional[str] = None
     cover_url: Optional[str] = None
     is_public: bool = True
+    #
+    group_type: GroupType = GroupType.DISCUSSION 
+    #
 
 
 class GroupOut(BaseModel):
@@ -136,7 +143,9 @@ class GroupOut(BaseModel):
     cover_url: Optional[str] = None
     is_public: bool
     created_by_user_id: int
-
+    #
+    group_type: GroupType = GroupType.DISCUSSION 
+    #
     model_config = {"from_attributes": True}
 
 
@@ -230,3 +239,36 @@ class FreemiumInfo(BaseModel):
     max_groups_free: int
     groups_used: int
     can_join_more: bool
+
+#
+class GroupMessageCreate(BaseModel):
+    body: Optional[str] = None
+    listing_id: Optional[int] = None
+    reply_to_id: Optional[int] = None
+
+class GroupMessageSenderOut(BaseModel):
+    id: int
+    name: str
+    avatar_url: Optional[str] = None
+    model_config = {"from_attributes": True}
+
+class GroupMessageReplyOut(BaseModel):
+    id: int
+    body: Optional[str] = None
+    sender: GroupMessageSenderOut
+    model_config = {"from_attributes": True}
+
+class GroupMessageOut(BaseModel):
+    id: int
+    group_id: int
+    sender_id: int
+    kind: str
+    body: Optional[str] = None
+    listing_id: Optional[int] = None
+    reply_to_id: Optional[int] = None
+    created_at: datetime
+    sender: GroupMessageSenderOut
+    listing: Optional["ListingOut"] = None
+    reply_to: Optional[GroupMessageReplyOut] = None
+    model_config = {"from_attributes": True}
+    #

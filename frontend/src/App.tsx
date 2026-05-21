@@ -16,6 +16,14 @@ import { Perfil } from "./pages/Perfil";
 import { Register } from "./pages/Register";
 import { Vendidos } from "./pages/Vendidos";
 
+//
+import GrupoChat from "./pages/GrupoChat";
+import GrupoHistorico from "./pages/GrupoHistorico";
+
+<Route path="/grupos/:id/chat" element={<GrupoChat />} />
+<Route path="/grupos/:id/historico" element={<GrupoHistorico />} />
+//
+
 function HomeRedirect() {
   const { user, loading } = useAuth();
   if (loading) {

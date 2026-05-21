@@ -152,6 +152,12 @@ class Group(Base):
     )
 
     members: Mapped[list["GroupMember"]] = relationship(back_populates="group")
+    #
+    group_type: Mapped[GroupType] = mapped_column(
+        Enum(GroupType), default=GroupType.DISCUSSION, nullable=False
+    )
+    messages: Mapped[list["GroupMessage"]] = relationship(back_populates="group")
+    #
 
 
 class GroupMember(Base):
@@ -167,6 +173,29 @@ class GroupMember(Base):
     user: Mapped["User"] = relationship(back_populates="group_memberships")
 
     __table_args__ = (UniqueConstraint("group_id", "user_id", name="uq_group_member"),)
+
+#
+class GroupMessage(Base):
+    __tablename__ = "group_messages"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    group_id: Mapped[int] = mapped_column(ForeignKey("groups.id", ondelete="CASCADE"), index=True)
+    sender_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[MessageKind] = mapped_column(Enum(MessageKind), default=MessageKind.TEXT, nullable=False)
+    body: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    listing_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("listings.id", ondelete="SET NULL"), nullable=True
+    )
+    reply_to_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("group_messages.id", ondelete="SET NULL"), nullable=True
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    group: Mapped["Group"] = relationship(back_populates="messages")
+    sender: Mapped["User"] = relationship()
+    listing: Mapped[Optional["Listing"]] = relationship()
+    reply_to: Mapped[Optional["GroupMessage"]] = relationship(remote_side="GroupMessage.id")
+    #
 
 
 class Listing(Base):

@@ -36,6 +36,16 @@ class GroupRole(str, enum.Enum):
     MODERATOR = "MODERATOR"
     MEMBER = "MEMBER"
 
+#adiçao minha
+class GroupType(str, enum.Enum):
+    DISCUSSION = "DISCUSSION"
+    MARKETPLACE = "MARKETPLACE"
+
+class MessageKind(str, enum.Enum):
+    TEXT = "TEXT"
+    LISTING_REF = "LISTING_REF"
+#
+
 
 class ListingStatus(str, enum.Enum):
     ACTIVE = "ACTIVE"

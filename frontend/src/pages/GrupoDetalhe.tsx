@@ -64,6 +64,16 @@ export function GrupoDetalhe() {
         </button>
       )}
 
+      {g.my_role && (
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={() => nav(`/app/grupos/${id}/chat`)}>
+          Abrir Chat
+        </button>
+      )}
+      
+
       <section className="section">
         <h2>Ofertas no grupo</h2>
         {feed.length === 0 ? (

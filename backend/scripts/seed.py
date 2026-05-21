@@ -10,6 +10,7 @@ from app.models import (
     Group,
     GroupMember,
     GroupRole,
+    GroupType,
     PlanType,
     ReadingStatus,
     User,
@@ -50,78 +51,102 @@ def main() -> None:
             ("O Hobbit", "J.R.R. Tolkien", "https://picsum.photos/seed/hobbit/200/300"),
         ]
         books = [
-            Book(title=t, author=a, cover_url=c, published_year=2000 + i) for i, (t, a, c) in enumerate(books_data)
+            Book(title=t, author=a, cover_url=c, published_year=2000 + i)
+            for i, (t, a, c) in enumerate(books_data)
         ]
         db.add_all(books)
         db.flush()
 
-        g1 = Group(
-            name="Clube Dom Casmurro",
-            description="Discussões mensais sobre Machado.",
-            cover_url="https://picsum.photos/seed/g1/200/200",
+        # ── Grupos de discussão ──────────────────────────────────────────────
+        g_classicos = Group(
+            name="Clássicos Literários Brasileiros",
+            description="Debates sobre Machado de Assis, Clarice Lispector, Guimarães Rosa e outros pilares da literatura brasileira.",
+            cover_url="https://picsum.photos/seed/classicos/200/200",
             is_public=True,
+            group_type=GroupType.DISCUSSION,
             created_by_user_id=u1.id,
         )
-        g2 = Group(
-            name="Fantasia & Sci-Fi",
-            description="Ficção especulativa em geral.",
-            cover_url="https://picsum.photos/seed/g2/200/200",
+        g_hp = Group(
+            name="HP & Lovecraft — Mundos do Impossível",
+            description="De Hogwarts aos horrores cósmicos de Arkham. Discussões sobre Harry Potter, H.P. Lovecraft e universos de fantasia e horror.",
+            cover_url="https://picsum.photos/seed/hplovecraft/200/200",
             is_public=True,
+            group_type=GroupType.DISCUSSION,
             created_by_user_id=u2.id,
         )
-        g3 = Group(
-            name="Leituras Rápidas",
-            description="Metas curtas e check-ins semanais.",
-            cover_url="https://picsum.photos/seed/g3/200/200",
+
+        # ── Grupos de compra/venda ───────────────────────────────────────────
+        g_tecnicos = Group(
+            name="Livros Técnicos de Exatas",
+            description="Compra e venda de livros acadêmicos e técnicos de matemática, física, computação, engenharia e áreas afins.",
+            cover_url="https://picsum.photos/seed/tecnicos/200/200",
             is_public=True,
+            group_type=GroupType.MARKETPLACE,
             created_by_user_id=u1.id,
         )
-        db.add_all([g1, g2, g3])
+        g_quadrinhos = Group(
+            name="Quadrinhos & HQs",
+            description="Marketplace para quadrinhos, mangás, graphic novels e HQs nacionais e importadas.",
+            cover_url="https://picsum.photos/seed/quadrinhos/200/200",
+            is_public=True,
+            group_type=GroupType.MARKETPLACE,
+            created_by_user_id=u2.id,
+        )
+
+        db.add_all([g_classicos, g_hp, g_tecnicos, g_quadrinhos])
         db.flush()
 
-        db.add_all(
-            [
-                GroupMember(group_id=g1.id, user_id=u1.id, role=GroupRole.OWNER),
-                GroupMember(group_id=g2.id, user_id=u1.id, role=GroupRole.MEMBER),
-                GroupMember(group_id=g3.id, user_id=u1.id, role=GroupRole.MEMBER),
-                GroupMember(group_id=g2.id, user_id=u2.id, role=GroupRole.OWNER),
-                GroupMember(group_id=g1.id, user_id=u2.id, role=GroupRole.MEMBER),
-            ]
-        )
+        db.add_all([
+            # Clássicos Brasileiros
+            GroupMember(group_id=g_classicos.id, user_id=u1.id, role=GroupRole.OWNER),
+            GroupMember(group_id=g_classicos.id, user_id=u2.id, role=GroupRole.MEMBER),
+            # HP & Lovecraft
+            GroupMember(group_id=g_hp.id, user_id=u2.id, role=GroupRole.OWNER),
+            GroupMember(group_id=g_hp.id, user_id=u1.id, role=GroupRole.MEMBER),
+            # Livros Técnicos
+            GroupMember(group_id=g_tecnicos.id, user_id=u1.id, role=GroupRole.OWNER),
+            GroupMember(group_id=g_tecnicos.id, user_id=u2.id, role=GroupRole.MEMBER),
+            # Quadrinhos
+            GroupMember(group_id=g_quadrinhos.id, user_id=u2.id, role=GroupRole.OWNER),
+            GroupMember(group_id=g_quadrinhos.id, user_id=u1.id, role=GroupRole.MEMBER),
+        ])
 
         now = datetime.now(timezone.utc)
-        db.add_all(
-            [
-                UserBook(
-                    user_id=u1.id,
-                    book_id=books[0].id,
-                    status=ReadingStatus.LENDO,
-                    progress_page=120,
-                    progress_percent=35,
-                    started_at=now,
-                    notes="Capítulo marcante na capitu.",
-                ),
-                UserBook(
-                    user_id=u1.id,
-                    book_id=books[2].id,
-                    status=ReadingStatus.QUERO_LER,
-                    notes="Clássico distópico.",
-                ),
-                UserBook(
-                    user_id=u1.id,
-                    book_id=books[3].id,
-                    status=ReadingStatus.LIDO,
-                    progress_percent=100.0,
-                    started_at=now,
-                    finished_at=now,
-                    rating=5,
-                    notes="Releitura excelente.",
-                ),
-            ]
-        )
+        db.add_all([
+            UserBook(
+                user_id=u1.id,
+                book_id=books[0].id,
+                status=ReadingStatus.LENDO,
+                progress_page=120,
+                progress_percent=35,
+                started_at=now,
+                notes="Capítulo marcante na capitu.",
+            ),
+            UserBook(
+                user_id=u1.id,
+                book_id=books[2].id,
+                status=ReadingStatus.QUERO_LER,
+                notes="Clássico distópico.",
+            ),
+            UserBook(
+                user_id=u1.id,
+                book_id=books[3].id,
+                status=ReadingStatus.LIDO,
+                progress_percent=100.0,
+                started_at=now,
+                finished_at=now,
+                rating=5,
+                notes="Releitura excelente.",
+            ),
+        ])
 
         db.commit()
         print("Seed OK. Usuários: demo@versos.com / demo1234, maria@versos.com / demo1234")
+        print("Grupos criados:")
+        print("  [DISCUSSÃO] Clássicos Literários Brasileiros")
+        print("  [DISCUSSÃO] HP & Lovecraft — Mundos do Impossível")
+        print("  [MARKETPLACE] Livros Técnicos de Exatas")
+        print("  [MARKETPLACE] Quadrinhos & HQs")
     finally:
         db.close()
 

@@ -69,17 +69,15 @@ function AppRoutes() {
           <Route path="grupos" element={<Grupos />} />
         </Route>
         <Route element={<StackLayout />}>
-          <Route path="perfil" element={<Perfil />} />
+         <Route path="perfil" element={<Perfil />} />
           <Route path="notificacoes" element={<Notificacoes />} />
           <Route path="livros/:bookId" element={<LivroDetalhe />} />
           <Route path="grupos/:groupId" element={<GrupoDetalhe />} />
           <Route path="anuncios/novo" element={<NovoAnuncio />} />
           <Route path="anuncios/:listingId" element={<AnuncioDetalhe />} />
           <Route path="compras/:purchaseId" element={<CompraDetalhe />} />
-          //
-          <Route path="/app/grupos/:id/chat" element={<GrupoChat />} />
-          <Route path="/app/grupos/:id/historico" element={<GrupoHistorico />} />
-          //
+          <Route path="grupos/:id/chat" element={<GrupoChat />} />
+          <Route path="grupos/:id/historico" element={<GrupoHistorico />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

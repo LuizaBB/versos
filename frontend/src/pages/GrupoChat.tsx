@@ -233,7 +233,7 @@ function ListingCard({ listing }: { listing: ListingSnippet }) {
   const navigate = useNavigate();
   return (
     <div
-      onClick={() => navigate(`/anuncios/${listing.id}`)}
+      onClick={() => navigate(`/app/anuncios/${listing.id}`)}
       style={{
         display: "flex",
         gap: 10,
@@ -335,12 +335,18 @@ export default function GrupoChat() {
   const lastIdRef = useRef<number>(0);
 
   // Busca detalhes do grupo
-  useEffect(() => {
+  /*useEffect(() => {
     apiFetch<GroupDetail>(`/groups/${groupId}`)
       .then(setGroup)
       .catch(() => navigate("/grupos"));
-  }, [groupId, navigate]);
+  }, [groupId, navigate]);*/
 
+  useEffect(() => {
+  apiFetch<GroupDetail>(`/groups/${groupId}`)
+    .then(setGroup)
+    .catch(() => navigate("/app/grupos"));
+}, [groupId, navigate]);
+  
   // Carrega mensagens iniciais
   const fetchMessages = useCallback(
     async (silent = false) => {
@@ -457,7 +463,7 @@ export default function GrupoChat() {
         }}
       >
         <button
-          onClick={() => navigate("/grupos")}
+          onClick={() => navigate("/app/grupos")}
           style={{
             background: "none",
             border: "none",
@@ -488,7 +494,7 @@ export default function GrupoChat() {
         </div>
         {isMarketplace && (
           <button
-            onClick={() => navigate(`/grupos/${groupId}/historico`)}
+            onClick={() => navigate(`/app/grupos/${groupId}/historico`)}
             style={{
               background: "#2a2118",
               border: "1px solid #3d2e1a",

@@ -6,15 +6,13 @@ from pydantic import BaseModel, EmailStr, Field
 from app.models import (
     BookCondition,
     GroupRole,
+    GroupType,       # ← adicionar
     ListingStatus,
+    MessageKind,     # ← adicionar
     NotificationType,
     PlanType,
     PurchaseStatus,
     ReadingStatus,
-#
-    MessageKind, 
-    ListingStatus,
-#
 )
 
 

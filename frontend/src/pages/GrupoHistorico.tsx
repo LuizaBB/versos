@@ -61,9 +61,13 @@ export default function GrupoHistorico() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  useEffect(() => {
+  /*useEffect(() => {
     apiFetch<GroupDetail>(`/groups/${groupId}`).then(setGroup).catch(() => navigate("/grupos"));
-  }, [groupId, navigate]);
+  }, [groupId, navigate]);*/
+
+  useEffect(() => {
+  apiFetch<GroupDetail>(`/groups/${groupId}`).then(setGroup).catch(() => navigate("/app/grupos"));
+}, [groupId, navigate]);
 
   useEffect(() => {
     apiFetch<Message[]>(`/groups/${groupId}/history`)
@@ -107,7 +111,7 @@ export default function GrupoHistorico() {
         }}
       >
         <button
-          onClick={() => navigate(`/grupos/${groupId}/chat`)}
+          onClick={() => navigate(`/app/grupos/${groupId}/chat`)}
           style={{
             background: "none",
             border: "none",

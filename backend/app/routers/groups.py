@@ -17,7 +17,7 @@ router = APIRouter(prefix="/groups", tags=["groups"])
 def _member_count(db: Session, group_id: int) -> int:
     return db.scalar(select(func.count()).select_from(GroupMember).where(GroupMember.group_id == group_id)) or 0
 
-
+'''
 @router.get("", response_model=list[GroupOut])
 def search_groups(
     _: Annotated[User, Depends(get_current_user)],
@@ -49,7 +49,37 @@ def search_groups(
             )
         )
     return list(db.scalars(stmt.limit(80)).all())
-
+'''
+@router.get("", response_model=list[GroupOut])
+def search_groups(
+    _: Annotated[User, Depends(get_current_user)],
+    q: str | None = None,
+    db: Session = Depends(get_db),
+):
+    stmt = select(Group).order_by(Group.name)
+    if q:
+        like = f"%{q}%"
+        listing_in_group = (
+            select(ListingGroup.group_id)
+            .join(Listing, Listing.id == ListingGroup.listing_id)
+            .join(Book, Book.id == Listing.book_id)
+            .where(
+                or_(
+                    Listing.title.ilike(like),
+                    Book.title.ilike(like),
+                    Book.author.ilike(like),
+                )
+            )
+            .scalar_subquery()
+        )
+        stmt = stmt.where(
+            or_(
+                Group.name.ilike(like),
+                Group.description.ilike(like),
+                Group.id.in_(listing_in_group),
+            )
+        )
+    return list(db.scalars(stmt.limit(80)).all())
 
 @router.get("/{group_id}", response_model=GroupDetailOut)
 def get_group(group_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):

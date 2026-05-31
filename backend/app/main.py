@@ -67,6 +67,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth, books, groups, listings, me_shelf, notifications, purchases
 from app.strip_prefix import StripServiceRoutePrefixMiddleware, _route_prefix
 from app.routers.group_messages import router as group_messages_router  # ← só o import aqui
+#
+from app.routers.direct_messages import router as direct_messages_router
+from app.routers.direct_messages import buyers_router
+#
 
 def _cors_origins() -> list[str]:
     raw = os.getenv("CORS_ORIGINS", "")
@@ -102,6 +106,10 @@ app.include_router(purchases.router)
 app.include_router(purchases.me_purchases_router)
 app.include_router(notifications.router)
 app.include_router(group_messages_router)  # ← include aqui, após app ser criado
+#
+app.include_router(direct_messages_router)
+app.include_router(buyers_router)#
+#
 
 _rp = _route_prefix()
 if _rp:

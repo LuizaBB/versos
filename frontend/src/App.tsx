@@ -20,8 +20,7 @@ import { Vendidos } from "./pages/Vendidos";
 import GrupoChat from "./pages/GrupoChat";
 import GrupoHistorico from "./pages/GrupoHistorico";
 
-//<Route path="/app/grupos/:id/chat" element={<GrupoChat />} />
-//<Route path="/app/grupos/:id/historico" element={<GrupoHistorico />} />
+import ChatPrivado from "./pages/ChatPrivado";
 
 //
 
@@ -78,6 +77,9 @@ function AppRoutes() {
           <Route path="compras/:purchaseId" element={<CompraDetalhe />} />
           <Route path="grupos/:id/chat" element={<GrupoChat />} />
           <Route path="grupos/:id/historico" element={<GrupoHistorico />} />
+          
+          <Route path="compras/:purchaseId/chat" element={<ChatPrivado />} />
+          
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

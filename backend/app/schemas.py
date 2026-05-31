@@ -270,3 +270,25 @@ class GroupMessageOut(BaseModel):
     reply_to: Optional[GroupMessageReplyOut] = None
     model_config = {"from_attributes": True}
     #
+
+#
+class DirectMessageCreate(BaseModel):
+    body: str
+
+
+class DirectMessageSenderOut(BaseModel):
+    id: int
+    name: str
+    avatar_url: Optional[str] = None
+    model_config = {"from_attributes": True}
+
+
+class DirectMessageOut(BaseModel):
+    id: int
+    purchase_id: int
+    sender_id: int
+    body: str
+    created_at: datetime
+    sender: DirectMessageSenderOut
+    model_config = {"from_attributes": True}
+#

@@ -253,8 +253,30 @@ class Purchase(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
+    #
+    buyer: Mapped["User"] = relationship(foreign_keys="[Purchase.buyer_id]")
+    #
 
     listing: Mapped["Listing"] = relationship()
+#
+class DirectMessage(Base):
+    __tablename__ = "direct_messages"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    purchase_id: Mapped[int] = mapped_column(
+        ForeignKey("purchases.id", ondelete="CASCADE"), index=True
+    )
+    sender_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    body: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
+
+    sender: Mapped["User"] = relationship()
+    purchase: Mapped["Purchase"] = relationship()
+#
 
 
 class Notification(Base):

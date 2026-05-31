@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { apiFetch } from "../api/client";
 import type { Purchase, PurchaseStatus } from "../types";
 
@@ -16,6 +16,7 @@ function prettyStatus(s: PurchaseStatus) {
 }
 
 export function Comprados() {
+  const navigate = useNavigate();
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [err, setErr] = useState<string | null>(null);
 
@@ -30,9 +31,76 @@ export function Comprados() {
     })();
   }, []);
 
-  const active = purchases.filter((p) => p.status !== "COMPLETED" && p.status !== "CANCELLED");
-  const done = purchases.filter((p) => p.status === "COMPLETED" || p.status === "CANCELLED");
-
+const negociando = purchases.filter((p) => p.status === "PENDING");
+const active = purchases.filter(
+  (p) => p.status !== "PENDING" && p.status !== "COMPLETED" && p.status !== "CANCELLED"
+);
+const done = purchases.filter(
+  (p) => p.status === "COMPLETED" || p.status === "CANCELLED"
+);
+// // 
+// <section className="section">
+//   <h2>Em Negociação</h2>
+//   {negociando.length === 0 ? (
+//     <p className="muted">Nenhuma negociação em andamento.</p>
+//   ) : (
+//     <ul className="card-list">
+//       {negociando.map((p) => (
+//         <li key={p.id} className="card">
+//           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+//             <div>
+//               <Link to={`/app/anuncios/${p.listing_id}`}>
+//                 <strong>{p.listing.title}</strong>
+//               </Link>
+//               <p className="muted small">
+//                 R$ {p.amount.toFixed(2)}
+//               </p>
+//             </div>
+//             <button
+//               type="button"
+//               className="btn-primary"
+//               onClick={() => navigate(`/app/compras/${p.id}/chat`)}
+//             >
+//               Chat
+//             </button>
+//           </div>
+//         </li>
+//       ))}
+//     </ul>
+//   )}
+// </section>
+// 
+  <section className="section">
+  <h2>Em Negociação</h2>
+  {negociando.length === 0 ? (
+    <p className="muted">Nenhuma negociação em andamento.</p>
+  ) : (
+    <ul className="card-list">
+      {negociando.map((p) => (
+        <li key={p.id} className="card">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <Link to={`/app/anuncios/${p.listing_id}`}>
+                <strong>{p.listing.title}</strong>
+              </Link>
+              <p className="muted small">
+                R$ {p.amount.toFixed(2)}
+              </p>
+            </div>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => navigate(`/app/compras/${p.id}/chat`)}
+            >
+              Chat
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )}
+</section>
+  
   return (
     <div className="page">
       <header className="page-header">
